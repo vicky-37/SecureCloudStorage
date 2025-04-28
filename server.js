@@ -125,6 +125,8 @@ app.post("/login", async (req, res) => {
   const token = jwt.sign({ username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
   res.json({ token });
 });
+// Add this inside server.js
+console.log("AWS Bucket Name:", process.env.AWS_BUCKET_NAME);
 
 // Upload route (Encrypt and upload to S3)
 app.post("/upload", authenticateToken, upload.single("file"), (req, res) => {
