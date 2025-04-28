@@ -14,13 +14,13 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // AWS SDK Configuration
-AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: 'eu-north-1', // Change if your bucket is in a different region
+const s3 = new AWS.S3({ 
+  endpoint: 'https://s3.eu-north-1.amazonaws.com',  //  Explicit endpoint
+  region: 'eu-north-1',                             //  Correct region
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,       //  Env variable for Access Key
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, //  Env variable for Secret Key
+  s3ForcePathStyle: false,                          // use virtual hosted style
 });
-
-const s3 = new AWS.S3();
 
 // Multer setup (memory storage)
 const upload = multer({ storage: multer.memoryStorage() });
