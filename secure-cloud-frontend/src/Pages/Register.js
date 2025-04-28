@@ -17,7 +17,7 @@ const Register = () => {
 
         // Send POST request to the backend
         try {
-            const response = await fetch("http://localhost:5000/register", {
+            const response = await fetch("https://securecloudstorage-production.up.railway.app/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -43,36 +43,73 @@ const Register = () => {
     };
 
     return (
-        <div>
-            <h1>Register</h1>
+        <div className="page-container">
+          <div style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.85)',
+            padding: '40px',
+            borderRadius: '12px',
+            boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
+            width: '100%',
+            maxWidth: '400px',
+            textAlign: 'center',
+          }}>
+            <h1 style={{ marginBottom: '20px' }}>Register</h1>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="username">Username: </label>
-                    <input
-                        type="email"
-                        id="username"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="password">Password: </label>
-                    <input
-                        type="password"
-                        id="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button type="submit">Register</button>
+              <div style={{ marginBottom: '15px' }}>
+                <label htmlFor="username" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Username</label>
+                <input
+                  type="email"
+                  id="username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ccc',
+                  }}
+                />
+              </div>
+              <div style={{ marginBottom: '20px' }}>
+                <label htmlFor="password" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '5px',
+                    border: '1px solid #ccc',
+                  }}
+                />
+              </div>
+              <button
+                type="submit"
+                style={{
+                  backgroundColor: '#4CAF50',
+                  color: 'white',
+                  padding: '12px 20px',
+                  border: 'none',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  width: '100%',
+                  fontSize: '16px'
+                }}
+              >
+                Register
+              </button>
             </form>
-
-            {error && <div style={{ color: 'red' }}>{error}</div>}
-            {message && <div style={{ color: 'green' }}>{message}</div>}
+      
+            {error && <div style={{ color: 'red', marginTop: '15px' }}>{error}</div>}
+            {message && <div style={{ color: 'green', marginTop: '15px' }}>{message}</div>}
+          </div>
         </div>
-    );
+      );
+      
 };
 
 export default Register;

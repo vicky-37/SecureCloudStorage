@@ -1,5 +1,4 @@
 import './Dashboard.css';
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getToken, removeToken } from './Auth';
@@ -22,7 +21,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:5000/files", {
+      const response = await fetch("https://securecloudstorage-production.up.railway.app/files", {
         headers: {
           Authorization: `Bearer ${getToken()}`
         }
@@ -59,7 +58,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
 
-      const response = await fetch("http://localhost:5000/upload", {
+      const response = await fetch("https://securecloudstorage-production.up.railway.app/upload", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${getToken()}`
@@ -86,7 +85,7 @@ const Dashboard = () => {
   };
 
   const handleDownload = (filename) => {
-    window.open(`http://localhost:5000/download/${filename}`, "_blank");
+    window.open(`https://securecloudstorage-production.up.railway.app/download/${filename}`, "_blank");
   };
 
   const handleLogout = () => {

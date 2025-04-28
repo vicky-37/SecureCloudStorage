@@ -10,6 +10,7 @@ import ProtectedRoute from './ProtectedRoute'; // 👈 new import
 function App() {
   return (
     <Router>
+       <ToastContainer />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
