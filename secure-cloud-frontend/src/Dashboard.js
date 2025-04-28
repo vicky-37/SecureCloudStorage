@@ -85,35 +85,42 @@ const Dashboard = () => {
   };
 
   const handleDownload = async (filename) => {
-  const token = localStorage.getItem('token'); // ✅ Get token
+  const token = localStorage.getItem('token'); // ✅ Get stored JWT token
+
+  if (!token) {
+    alert("You must be logged in to download files.");
+    return;
+  }
 
   try {
     const response = await fetch(`https://securecloudstorage-production.up.railway.app/download/${filename}`, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${token}`, // ✅ Very Important
+        "Authorization": `Bearer ${token}`, // ✅ Send JWT token in Authorization header
       },
     });
 
     if (!response.ok) {
-      throw new Error("Failed to download file");
+      throw new Error("Failed to download file. Please check your session or try again.");
     }
 
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
+    const blob = await response.blob(); // Read file as blob (binary)
+    const url = window.URL.createObjectURL(blob); // Create temp download link
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = filename.replace("encrypted-", ""); // remove 'encrypted-' prefix
+    a.download = filename.replace("encrypted-", ""); // 🔥 Clean filename (remove "encrypted-")
     document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.URL.revokeObjectURL(url);
+    a.click(); // Auto click to download
+    a.remove(); // Clean up
+    window.URL.revokeObjectURL(url); // Free memory
 
   } catch (error) {
     console.error("Download error:", error);
+    alert("Error occurred during download. Check console.");
   }
 };
+
 
 
   const handleLogout = () => {
