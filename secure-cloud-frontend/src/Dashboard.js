@@ -84,9 +84,37 @@ const Dashboard = () => {
     }
   };
 
-  const handleDownload = (filename) => {
-    window.open(`https://securecloudstorage-production.up.railway.app/download/${filename}`, "_blank");
-  };
+  const handleDownload = async (filename) => {
+  const token = localStorage.getItem('token'); // ✅ Get token
+
+  try {
+    const response = await fetch(`https://securecloudstorage-production.up.railway.app/download/${filename}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`, // ✅ Very Important
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to download file");
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename.replace("encrypted-", ""); // remove 'encrypted-' prefix
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.error("Download error:", error);
+  }
+};
+
 
   const handleLogout = () => {
     removeToken();
