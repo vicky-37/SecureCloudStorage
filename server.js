@@ -15,10 +15,10 @@ const port = process.env.PORT || 5000;
 
 // AWS SDK Configuration
 const s3 = new AWS.S3({ 
-  endpoint: 'https://s3.eu-north-1.amazonaws.com',  //  Explicit endpoint
   region: 'eu-north-1',                             //  Correct region
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,       //  Env variable for Access Key
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY, //  Env variable for Secret Key
+  signatureVersion: 'v4',
   s3ForcePathStyle: false,                          // use virtual hosted style
 });
 
