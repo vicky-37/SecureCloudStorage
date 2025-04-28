@@ -1,5 +1,4 @@
 require("dotenv").config();  // Load environment variables from .env
-
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
@@ -11,6 +10,17 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const app = express();
 const port = process.env.PORT||5000;
+
+const AWS = require('aws-sdk'); // Add this below your other imports
+
+AWS.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: 'us-east-1', // ✅ Or whatever region your bucket is created in
+});
+
+const s3 = new AWS.S3(); // ✅ Now S3 is ready to use
+
 
 // Middleware
 app.use(cors({
@@ -129,7 +139,7 @@ app.post("/login", async (req, res) => {
 });
 
 // Multer Setup for file uploads
-const storage = multer.diskStorage({
+const storage = multer.memoryStorage({
     destination: (req, file, cb) => {
         cb(null, "uploads/");
     },
@@ -160,54 +170,80 @@ app.get("/public-key", (req, res) => {
 });
 
 app.post("/upload", authenticateToken, upload.single("file"), (req, res) => {
-    const filePath = req.file.path;
-    const encryptedFilePath = `uploads/encrypted-${req.file.filename}`;
+    if (!req.file) {
+        return res.status(400).json({ error: "No file uploaded" });
+    }
 
-    encryptFile(filePath, encryptedFilePath, () => {
-        fs.unlinkSync(filePath); // delete original file after encryption
-        res.json({ message: "File uploaded and encrypted successfully!", filename: `encrypted-${req.file.filename}` });
+    const iv = crypto.randomBytes(16);
+    const cipher = crypto.createCipheriv("aes-256-cbc", aesKey, iv);
+    const encryptedData = Buffer.concat([iv, cipher.update(req.file.buffer), cipher.final()]);
+
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: `encrypted-${Date.now()}-${req.file.originalname}`,
+        Body: encryptedData,
+    };
+
+    s3.upload(params, (err, data) => {
+        if (err) {
+            console.error("Error uploading to S3:", err);
+            return res.status(500).json({ error: "Upload failed" });
+        }
+
+        console.log("File uploaded successfully:", data.Location);
+        res.json({ message: "File uploaded and encrypted successfully!", fileUrl: data.Location });
     });
 });
 
+
 app.get("/files", authenticateToken, (req, res) => {
-    fs.readdir("uploads/", (err, files) => {
-        if (err) return res.status(500).json({ error: "Error reading files" });
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+    };
+
+    s3.listObjectsV2(params, (err, data) => {
+        if (err) {
+            console.error("Error listing files:", err);
+            return res.status(500).json({ error: "Error listing files" });
+        }
+
+        const files = data.Contents.map(item => item.Key);
         res.json({ files });
     });
 });
 
+
 app.get("/download/:filename", authenticateToken, (req, res) => {
     const filename = req.params.filename;
-    const encryptedFilePath = `uploads/${filename}`;
-    const decryptedFilePath = `uploads/decrypted-${filename}`;
 
-    if (!fs.existsSync(encryptedFilePath)) {
-        return res.status(404).json({ error: "File not found" });
-    }
+    const params = {
+        Bucket: process.env.AWS_BUCKET_NAME,
+        Key: filename,
+    };
 
-    fs.readFile(encryptedFilePath, (err, data) => {
-        if (err) return res.status(500).json({ error: "Error reading file" });
+    s3.getObject(params, (err, data) => {
+        if (err) {
+            console.error("Error fetching file from S3:", err);
+            return res.status(404).json({ error: "File not found" });
+        }
 
-        const iv = data.slice(0, 16);
-        const encryptedData = data.slice(16);
+        const encryptedData = data.Body;
+        const iv = encryptedData.slice(0, 16);
+        const cipherText = encryptedData.slice(16);
 
         try {
             const decipher = crypto.createDecipheriv("aes-256-cbc", aesKey, iv);
-            const decryptedData = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
+            const decryptedData = Buffer.concat([decipher.update(cipherText), decipher.final()]);
 
-            fs.writeFile(decryptedFilePath, decryptedData, (err) => {
-                if (err) return res.status(500).json({ error: "Error writing decrypted file" });
-
-                res.download(decryptedFilePath, filename.replace("encrypted-", ""), () => {
-                    fs.unlinkSync(decryptedFilePath);
-                });
-            });
+            res.set('Content-Disposition', `attachment; filename="${filename.replace('encrypted-', '')}"`);
+            res.send(decryptedData);
         } catch (error) {
             console.error("Decryption failed:", error);
             return res.status(500).json({ error: "Decryption failed!" });
         }
     });
 });
+
 
 // Start the server
 app.listen(port, () => {
