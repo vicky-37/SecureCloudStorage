@@ -41,7 +41,7 @@ const Register = () => {
 
         if (loginResponse.ok) {
           localStorage.setItem("token", loginData.token);
-          navigate("/dashboard"); // 🚀 Redirect to Dashboard
+          navigate("/dashboard");
         } else {
           setMessage("Registered. Please log in manually.");
           navigate("/login");
@@ -55,69 +55,42 @@ const Register = () => {
   };
 
   return (
-    <div className="page-container" style={{ display: 'flex', justifyContent: 'center', paddingTop: '80px' }}>
-      <div style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.85)',
-        padding: '40px',
-        borderRadius: '12px',
-        boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
-        width: '100%',
-        maxWidth: '400px',
-        textAlign: 'center',
-      }}>
-        <h1 style={{ marginBottom: '20px' }}>Register</h1>
-        <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: '15px' }}>
-            <label htmlFor="username" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Username</label>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 to-indigo-600 px-4">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+        <h1 className="text-2xl font-bold mb-6 text-gray-800">Register</h1>
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label htmlFor="username" className="block text-gray-700 text-left font-medium mb-1">Email</label>
             <input
               type="email"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '5px',
-                border: '1px solid #ccc',
-              }}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
-          <div style={{ marginBottom: '20px' }}>
-            <label htmlFor="password" style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Password</label>
+          <div>
+            <label htmlFor="password" className="block text-gray-700 text-left font-medium mb-1">Password</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              style={{
-                width: '100%',
-                padding: '10px',
-                borderRadius: '5px',
-                border: '1px solid #ccc',
-              }}
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
           <button
             type="submit"
-            style={{
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              padding: '12px 20px',
-              border: 'none',
-              borderRadius: '5px',
-              cursor: 'pointer',
-              width: '100%',
-              fontSize: '16px'
-            }}
+            className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition"
           >
             Register
           </button>
         </form>
 
-        {error && <div style={{ color: 'red', marginTop: '15px' }}>{error}</div>}
-        {message && <div style={{ color: 'green', marginTop: '15px' }}>{message}</div>}
+        {error && <div className="text-red-600 mt-4">{error}</div>}
+        {message && <div className="text-green-600 mt-4">{message}</div>}
       </div>
     </div>
   );

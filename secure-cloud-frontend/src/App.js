@@ -7,6 +7,7 @@ import Login from './Login';
 import Dashboard from './Dashboard';
 import ProtectedRoute from './ProtectedRoute'; // 👈 new import
 
+
 function App() {
   return (
     <Router>
