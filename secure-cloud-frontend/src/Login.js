@@ -71,6 +71,15 @@ const Login = () => {
           </button>
         </form>
         {error && <div className="text-red-600 mt-4 text-center">{error}</div>}
+          <p className="text-sm text-center text-gray-600 mt-4">
+          Don't have an account?{" "}
+          <span
+            className="text-indigo-600 hover:underline cursor-pointer"
+            onClick={() => navigate('/register')}
+          >
+            Register
+          </span>
+        </p>
       </div>
     </div>
   );
