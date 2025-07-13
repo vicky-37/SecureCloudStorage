@@ -24,7 +24,7 @@ const s3 = new AWS.S3({
 const upload = multer({ storage: multer.memoryStorage() });
 
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://secure-cloud-storage-rouge.vercel.app'],
+  origin: ['http://localhost:5000', 'https://secure-cloud-storage-rouge.vercel.app'],
   credentials: true,
 }));
 app.use(express.json());
