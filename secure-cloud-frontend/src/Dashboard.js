@@ -18,7 +18,7 @@ const Dashboard = () => {
   const fetchFiles = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://13.53.37.186:5000/files", {
+      const response = await fetch("https://hot-dominant-horizon-larry.trycloudflare.com/files", {
         headers: { Authorization: `Bearer ${getToken()}` }
       });
       const data = await response.json();
@@ -43,7 +43,7 @@ const Dashboard = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://13.53.37.186:5000/upload", {
+      const response = await fetch("https://hot-dominant-horizon-larry.trycloudflare.com/upload", {
         method: "POST",
         headers: { Authorization: `Bearer ${getToken()}` },
         body: formData
@@ -70,7 +70,7 @@ const Dashboard = () => {
     if (!token) return alert("You must be logged in to download files.");
 
     try {
-      const response = await fetch(`http://13.53.37.186:5000/download/${filename}`, {
+      const response = await fetch(`https://hot-dominant-horizon-larry.trycloudflare.com/download/${filename}`, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` },
       });
