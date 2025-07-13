@@ -145,5 +145,9 @@ app.get("/download/:filename", authenticateToken, (req, res) => {
     res.send(decrypted);
   });
 });
+// Health check route
+app.get('/health', (req, res) => {
+  res.json({ status: 'OK' });
+});
 
 app.listen(port, () => console.log(`Server running on http://localhost:${port}`));
