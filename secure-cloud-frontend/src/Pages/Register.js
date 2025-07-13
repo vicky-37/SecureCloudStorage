@@ -1,7 +1,5 @@
-// src/Register.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerUser, loginUser } from './api';
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -20,28 +18,39 @@ const Register = () => {
     }
 
     try {
-      const response = await registerUser({ username, password });
+      const response = await fetch("https://hot-dominant-horizon-larry.trycloudflare.com/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-      if (response.status === 200) {
+      const data = await response.json();
+      if (response.ok) {
         // 🔐 AUTO-LOGIN after successful registration
-        try {
-          const loginResponse = await loginUser({ username, password });
-          if (loginResponse.status === 200) {
-            localStorage.setItem("token", loginResponse.data.token);
-            navigate("/dashboard");
-          } else {
-            setMessage("Registered. Please log in manually.");
-            navigate("/login");
-          }
-        } catch (loginErr) {
+        const loginResponse = await fetch("https://hot-dominant-horizon-larry.trycloudflare.com/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+
+        const loginData = await loginResponse.json();
+
+        if (loginResponse.ok) {
+          localStorage.setItem("token", loginData.token);
+          navigate("/dashboard");
+        } else {
           setMessage("Registered. Please log in manually.");
           navigate("/login");
         }
       } else {
-        setError(response.data.error || "Registration failed");
+        setError(data.error);
       }
     } catch (err) {
-      setError(err.response?.data?.error || "Error occurred while registering the user.");
+      setError("Error occurred while registering the user.");
     }
   };
 
