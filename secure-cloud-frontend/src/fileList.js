@@ -10,7 +10,7 @@ const FileList = () => {
 
     const fetchFiles = async () => {
         try {
-            const response = await axios.get("http://13.53.37.186:5000/files");
+            const response = await axios.get("https://hot-dominant-horizon-larry.trycloudflare.com/files");
             setFiles(response.data.files);
         } catch (error) {
             console.error("Error fetching files:", error);
@@ -19,7 +19,7 @@ const FileList = () => {
 
     const handleDownload = async (filename) => {
         try {
-            const response = await axios.get(`http://13.53.37.186:5000/download/${filename}`, {
+            const response = await axios.get(`https://hot-dominant-horizon-larry.trycloudflare.com/download/${filename}`, {
                 responseType: "blob",
             });
 
