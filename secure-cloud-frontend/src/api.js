@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: 'http://13.53.37.186:5000/',
+  baseURL: 'https://hot-dominant-horizon-larry.trycloudflare.com',
 });
 
 // Upload file
