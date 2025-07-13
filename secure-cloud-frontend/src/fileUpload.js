@@ -7,7 +7,7 @@ const FileUpload = () => {
 
     useEffect(() => {
         async function fetchPublicKey() {
-            const response = await axios.get("http://13.53.37.186:5000/public-key");
+            const response = await axios.get("https://hot-dominant-horizon-larry.trycloudflare.com/public-key");
             setPublicKey(response.data.ecPublicKey);
         }
         fetchPublicKey();
@@ -24,7 +24,7 @@ const FileUpload = () => {
         formData.append("file", file);
 
         try {
-            await axios.post("http://13.53.37.186:5000/upload", formData);
+            await axios.post("https://hot-dominant-horizon-larry.trycloudflare.com/upload", formData);
             alert("File uploaded and encrypted!");
         } catch (error) {
             console.error("Upload failed:", error);
